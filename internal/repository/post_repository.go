@@ -19,8 +19,41 @@ func NewPostRepository() *PostRepository {
 	}
 }
 
-func (r *PostRepository) PostsList(dto *dtoAdmin.GetUserAdminListDTO) ([]admin.PostCollection, error) {
+func (r *PostRepository) AdminPostsList(dto *dtoAdmin.BaseAdminListDTO) (*PaginatedResponse[model.Post], error) {
 
-	var users []admin.PostCollection
-	return users, nil
+	query := r.database.Model(&model.Post{}).
+		Select("id, title, slug, description, email, hits, category_id, user_id, created_at")
+
+	if dto.Search != nil {
+		query = query.Where("title LIKE ?", "%"+*dto.Search+"%")
+	}
+
+	if dto.Search != nil {
+		query = query.Where("slug LIKE ?", "%"+*dto.Search+"%")
+	}
+
+	if dto.Search != nil {
+		query = query.Where("description LIKE ?", "%"+*dto.Search+"%")
+	}
+
+	if dto.CreatedAtFrom != nil {
+		query = query.Where("created_at >= ?", *dto.CreatedAtFrom)
+	}
+
+	if dto.CreatedAtTo != nil {
+		query = query.Where("created_at <= ?", *dto.CreatedAtTo)
+	}
+
+	query = r.OrderBY(query, *dto.Sort, *dto.Direction)
+
+	return r.Paginate(query, *dto.Page, *dto.Limit)
+}
+func (r *PostRepository) ClientPostsList(dto *dtoAdmin.BaseAdminListDTO) (*PaginatedResponse[model.Post], error) {
+
+	query := r.database.Model(&model.Post{}).
+		Select("id, title, slug, description, email, hits, category_id, user_id, created_at")
+
+	query = r.OrderBY(query, *dto.Sort, *dto.Direction)
+
+	return r.Paginate(query, *dto.Page, *dto.Limit)
 }

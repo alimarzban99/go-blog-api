@@ -18,7 +18,7 @@ func NewCategoryHandler() *CategoryHandler {
 
 func (h *CategoryHandler) Index(ctx *gin.Context) {
 
-	dto := new(dtoAdmin.GetUserAdminListDTO)
+	dto := new(dtoAdmin.BaseAdminListDTO)
 	err := ctx.ShouldBindJSON(&dto)
 	if err != nil {
 		response.ValidationErrorResponse(ctx, err.Error())

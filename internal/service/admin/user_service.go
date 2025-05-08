@@ -15,7 +15,7 @@ func NewUserService() *UserService {
 	return &UserService{repo: repository.NewUserRepository()}
 }
 
-func (s UserService) UserList(dto *dtoAdmin.GetUserAdminListDTO) ([]model.User, int64, error) {
+func (s UserService) UserList(dto *dtoAdmin.BaseAdminListDTO) (*repository.PaginatedResponse[model.User], error) {
 	return s.repo.AdminList(dto)
 }
 

@@ -18,14 +18,15 @@ func NewUserHandler() *UserHandler {
 
 func (h *UserHandler) Index(ctx *gin.Context) {
 
-	dto := new(dtoAdmin.GetUserAdminListDTO)
+	dto := new(dtoAdmin.BaseAdminListDTO)
 	err := ctx.ShouldBindJSON(&dto)
 	if err != nil {
 		response.ValidationErrorResponse(ctx, err.Error())
+		return
 	}
 	dto.SetDefaults()
 
-	users, _, err := h.service.UserList(dto)
+	users, err := h.service.UserList(dto)
 
 	if err != nil {
 		response.ErrorResponse(ctx, err.Error())

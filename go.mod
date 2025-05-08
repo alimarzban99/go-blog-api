@@ -5,6 +5,7 @@ go 1.24.1
 require (
 	github.com/didip/tollbooth/v7 v7.0.2
 	github.com/gin-gonic/gin v1.10.0
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/spf13/viper v1.20.1
 	gorm.io/driver/mysql v1.5.7
@@ -28,7 +29,6 @@ require (
 	github.com/go-sql-driver/mysql v1.9.2 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

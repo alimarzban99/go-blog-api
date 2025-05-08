@@ -2,6 +2,7 @@ package admin
 
 import (
 	dtoAdmin "github.com/alimarzban99/go-blog-api/internal/dtos/admin"
+	"github.com/alimarzban99/go-blog-api/internal/model"
 	"github.com/alimarzban99/go-blog-api/internal/repository"
 	"github.com/alimarzban99/go-blog-api/internal/resources/admin"
 )
@@ -14,7 +15,7 @@ func NewCategoryService() *CategoryService {
 	return &CategoryService{repo: repository.NewCategoryRepository()}
 }
 
-func (s *CategoryService) CategoriesList(dto *dtoAdmin.GetUserAdminListDTO) ([]admin.CategoryCollection, error) {
+func (s *CategoryService) CategoriesList(dto *dtoAdmin.BaseAdminListDTO) (*repository.PaginatedResponse[model.Category], error) {
 	return s.repo.CategoriesList(dto)
 }
 

@@ -2,6 +2,7 @@ package admin
 
 import (
 	dtoAdmin "github.com/alimarzban99/go-blog-api/internal/dtos/admin"
+	"github.com/alimarzban99/go-blog-api/internal/model"
 	"github.com/alimarzban99/go-blog-api/internal/repository"
 	"github.com/alimarzban99/go-blog-api/internal/resources/admin"
 )
@@ -14,8 +15,8 @@ func NewPostService() *PostService {
 	return &PostService{repo: repository.NewPostRepository()}
 }
 
-func (s *PostService) PostsList(dto *dtoAdmin.GetUserAdminListDTO) ([]admin.PostCollection, error) {
-	return s.repo.PostsList(dto)
+func (s *PostService) PostsList(dto *dtoAdmin.BaseAdminListDTO) (*repository.PaginatedResponse[model.Post], error) {
+	return s.repo.AdminPostsList(dto)
 }
 
 func (s *PostService) Show(id int) (*admin.PostResource, error) {

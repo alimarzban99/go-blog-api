@@ -5,7 +5,6 @@ import (
 	"github.com/alimarzban99/go-blog-api/internal/model"
 	"github.com/alimarzban99/go-blog-api/internal/resources/admin"
 	"github.com/alimarzban99/go-blog-api/pkg/database"
-	"gorm.io/gorm/clause"
 )
 
 type UserRepository struct {
@@ -20,9 +19,7 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-func (r UserRepository) AdminList(dto *dtoAdmin.GetUserAdminListDTO) ([]model.User, int64, error) {
-	var users []model.User
-	var total int64
+func (r UserRepository) AdminList(dto *dtoAdmin.BaseAdminListDTO) (*PaginatedResponse[model.User], error) {
 
 	query := r.database.Model(&model.User{}).
 		Select("id, first_name, last_name, mobile, email, is_admin, created_at")
@@ -43,25 +40,9 @@ func (r UserRepository) AdminList(dto *dtoAdmin.GetUserAdminListDTO) ([]model.Us
 		query = query.Where("created_at <= ?", *dto.CreatedAtTo)
 	}
 
-	sortDirection := *dto.Direction
+	query = r.OrderBY(query, *dto.Sort, *dto.Direction)
 
-	query = query.Order(clause.OrderByColumn{
-		Column: clause.Column{Name: *dto.Sort},
-		Desc:   sortDirection == "desc",
-	})
-
-	// Paginate
-	offset := (*dto.Page - 1) * *dto.Limit
-	err := query.Count(&total).
-		Offset(offset).
-		Limit(*dto.Limit).
-		Find(&users).Error
-
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return users, total, nil
+	return r.Paginate(query, *dto.Page, *dto.Limit)
 }
 
 func (r UserRepository) CheckExistsByMobile(mobile string) (bool, error) {
