@@ -38,7 +38,15 @@ func (h *Handler) Verify(ctx *gin.Context) {
 		response.ValidationErrorResponse(ctx, err.Error())
 		return
 	}
-	response.SuccessResponse(ctx, token)
+	response.SuccessResponse(ctx, struct {
+		AccessToken string `json:"access_token"`
+	}{
+		AccessToken: token,
+	})
 }
 
-func (h *Handler) Logout(ctx *gin.Context) {}
+func (h *Handler) Logout(ctx *gin.Context) {
+	jti := ctx.MustGet("jti").(string)
+	h.service.Logout(jti)
+	response.SuccessResponse(ctx, "Logged out")
+}

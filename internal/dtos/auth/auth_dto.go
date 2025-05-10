@@ -17,9 +17,8 @@ type VerifyOTPCodeDTO struct {
 	Code   string `json:"code" binding:"required,min=4,max=4"`
 }
 
-type TokenDetail struct {
-	AccessToken            string `json:"access_token"`
-	RefreshToken           string `json:"refresh_token"`
-	AccessTokenExpireTime  int64  `json:"access_token_expire_time"`
-	RefreshTokenExpireTime int64  `json:"refresh_token_expire_time"`
+type TokenCreate struct {
+	UserID    uint
+	ExpiresAt time.Time
+	Revoked   bool
 }

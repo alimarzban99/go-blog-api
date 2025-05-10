@@ -19,7 +19,7 @@ type BaseModel struct {
 
 func Starter() {
 	db := database.GetDB()
-	err := db.AutoMigrate(&User{}, &VerificationCode{}, &Post{}, &Category{})
+	err := db.AutoMigrate(&User{}, &VerificationCode{}, &Token{}, &Post{}, &Category{})
 	if err != nil {
 		return
 	}
