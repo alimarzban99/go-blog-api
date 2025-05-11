@@ -5,17 +5,20 @@ import (
 	"github.com/alimarzban99/go-blog-api/internal/model"
 	"github.com/alimarzban99/go-blog-api/internal/resources/admin"
 	"github.com/alimarzban99/go-blog-api/pkg/database"
+	"github.com/redis/go-redis/v9"
 )
 
 type PostRepository struct {
 	*Repository[model.Post, dtoAdmin.StorePostDTO, dtoAdmin.UpdatePostDTO, admin.PostResource]
+	redis *redis.Client
 }
 
 func NewPostRepository() *PostRepository {
 	return &PostRepository{
-		&Repository[model.Post, dtoAdmin.StorePostDTO, dtoAdmin.UpdatePostDTO, admin.PostResource]{
+		Repository: &Repository[model.Post, dtoAdmin.StorePostDTO, dtoAdmin.UpdatePostDTO, admin.PostResource]{
 			database: database.GetDB(),
 		},
+		redis: database.GetRedis(),
 	}
 }
 

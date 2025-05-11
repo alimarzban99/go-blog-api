@@ -19,6 +19,9 @@ func main() {
 	model.Starter()
 	defer database.CloseDb()
 
+	err = database.InitRedis()
+	defer database.CloseRedis()
+
 	gin.SetMode(config.Config.App.Env)
 	router := gin.Default()
 
