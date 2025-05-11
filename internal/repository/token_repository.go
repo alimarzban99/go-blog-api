@@ -24,7 +24,7 @@ func (r *TokenRepository) FindToken(jti string) (bool, error) {
 	err := r.database.
 		Model(&model.Token{}).
 		Select("count(*) > 0").
-		Where("id = ? AND revoked = 0", jti).
+		Where("id = ? AND revoked = ?", jti, false).
 		Find(&exists).Error
 	return exists, err
 }

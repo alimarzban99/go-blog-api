@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/alimarzban99/go-blog-api/internal/enums"
 	"github.com/alimarzban99/go-blog-api/pkg/database"
 	"gorm.io/gorm"
 	"net/http"
@@ -14,7 +13,7 @@ type BaseModel struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
-	Status    enums.Status   `gorm:"type:enum('active','inactive','banned');default:'active'"`
+	Status    string         `gorm:"type:status;default:'active'"`
 }
 
 func Starter() {

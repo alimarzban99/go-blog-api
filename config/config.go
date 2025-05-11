@@ -21,11 +21,15 @@ type AppConfig struct {
 		DataBase int
 	}
 	Database struct {
-		Host     string
-		Port     int
-		User     string
-		Password string
-		Name     string
+		Host            string
+		Port            string
+		User            string
+		Password        string
+		Name            string
+		SSLMode         string
+		MaxIdleConns    int
+		MaxOpenConns    int
+		ConnMaxLifetime time.Duration
 	}
 	OTPCode struct {
 		ExpireTime time.Duration
@@ -75,17 +79,25 @@ func LoadConfig() {
 			DataBase: viper.GetInt("REDIS_DATABASE"),
 		},
 		Database: struct {
-			Host     string
-			Port     int
-			User     string
-			Password string
-			Name     string
+			Host            string
+			Port            string
+			User            string
+			Password        string
+			Name            string
+			SSLMode         string
+			MaxIdleConns    int
+			MaxOpenConns    int
+			ConnMaxLifetime time.Duration
 		}{
-			Host:     viper.GetString("DB_HOST"),
-			Port:     viper.GetInt("DB_PORT"),
-			User:     viper.GetString("DB_USERNAME"),
-			Password: viper.GetString("DB_PASSWORD"),
-			Name:     viper.GetString("DB_DATABASE"),
+			Host:            viper.GetString("POSTGRES_HOST"),
+			Port:            viper.GetString("POSTGRES_PORT"),
+			User:            viper.GetString("POSTGRES_USER"),
+			Password:        viper.GetString("POSTGRES_PASSWORD"),
+			Name:            viper.GetString("POSTGRES_DATABASE"),
+			SSLMode:         viper.GetString("POSTGRES_SSL_MODE"),
+			MaxIdleConns:    viper.GetInt("POSTGRES_MAX_IDLE_CONNS"),
+			MaxOpenConns:    viper.GetInt("POSTGRES_MAX_OPEN_CONNS"),
+			ConnMaxLifetime: time.Duration(viper.GetInt("POSTGRES_CONN_MAX_LIFE_TIME")),
 		},
 		OTPCode: struct {
 			ExpireTime time.Duration
