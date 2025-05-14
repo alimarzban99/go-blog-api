@@ -14,11 +14,26 @@ Implementing this RESTful API using Go and Gin, along with Postgres for data sto
 ## Technologies Used
 - **Go**: The programming language used for the API implementation.
 - **Gin Web Framework**: A popular Go web framework used for building the API.
+- **Cobra**: Cobra is a CLI framework for Go.
 - **Postgres**: The  database used for storing blog post data.
 - **Docker**: Used for containerizing the application for easy deployment.
 
 ## Clone Repository
 
 ```bash
-git clone https://github.com/alimarzban99/go-blog-api.git
+    git clone https://github.com/alimarzban99/go-blog-api.git
+```
+
+## Run Project
+
+- **step 1**
+
+```bash
+     go run cmd/main.go migrate
+```
+
+- **step 2**
+
+```bash
+     go run cmd/main.go serve
 ```
