@@ -41,6 +41,12 @@ type AppConfig struct {
 		Secret                     string
 		RefreshSecret              string
 	}
+	Logger struct {
+		Filepath string
+		Encoding string
+		Level    string
+		Driver   string
+	}
 }
 
 var Config *AppConfig
@@ -116,6 +122,17 @@ func LoadConfig() {
 			RefreshTokenExpireDuration: time.Duration(viper.GetInt("JWT_REFRESH_TOKEN_EXPIRE_DURATION")),
 			Secret:                     viper.GetString("JWT_SECRET"),
 			RefreshSecret:              viper.GetString("JWT_REFRESH_SECRET"),
+		},
+		Logger: struct {
+			Filepath string
+			Encoding string
+			Level    string
+			Driver   string
+		}{
+			Filepath: viper.GetString("LOGGER_FILEPATH"),
+			Encoding: viper.GetString("LOGGER_ENCODING"),
+			Level:    viper.GetString("LOGGER_LEVEL"),
+			Driver:   viper.GetString("LOGGER_DRIVER"),
 		},
 	}
 }

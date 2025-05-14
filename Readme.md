@@ -1,21 +1,25 @@
 # GoLang-Blog-API
 
 ## About
+
 This is a beginner-level blog backend project.
 
-Implementing this RESTful API using Go and Gin, along with Postgres for data storage and Docker for deployment, results in a scalable, maintainable, and easily deployable application.
+Implementing this RESTful API using Go and Gin, along with Postgres for data storage and Docker for deployment, results
+in a scalable, maintainable, and easily deployable application.
 
 ## Features
+
 - **CRUD Operations**: The API allows users to create, read, update, and delete blog posts.
 - **Filtering**: Users can filter blog posts by search terms.
 - **Postgres Integration**: The application uses Postgres as the database for storing blog posts.
 - **Docker Deployment**: The application can be easily deployed using Docker.
 
 ## Technologies Used
+
 - **Go**: The programming language used for the API implementation.
 - **Gin Web Framework**: A popular Go web framework used for building the API.
 - **Cobra**: Cobra is a CLI framework for Go.
-- **Postgres**: The  database used for storing blog post data.
+- **Postgres**: The database used for storing blog post data.
 - **Docker**: Used for containerizing the application for easy deployment.
 
 ## Clone Repository
@@ -29,11 +33,35 @@ Implementing this RESTful API using Go and Gin, along with Postgres for data sto
 - **step 1**
 
 ```bash
-     go run cmd/main.go migrate
+      cp .env.example .env
 ```
 
 - **step 2**
 
 ```bash
-     go run cmd/main.go serve
+      docker compose up -d
+```
+
+- **step 3**
+
+```bash
+      go run cmd/main.go migrate
+```
+
+- **step 4**
+
+```bash
+      openssl genrsa -out keys/private.pem 2048
+```
+
+- **step 5**
+
+```bash
+      openssl rsa -in keys/private.pem -pubout -out keys/public.pem
+```
+
+- **step 6**
+
+```bash
+      go run cmd/main.go serve
 ```
