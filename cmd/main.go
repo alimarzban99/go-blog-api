@@ -1,7 +1,7 @@
 package main
 
-import "github.com/alimarzban99/go-blog-api/cmd/root"
+import "github.com/alimarzban99/go-blog-api/cmd/console"
 
 func main() {
-	root.Execute()
+	console.Execute()
 }

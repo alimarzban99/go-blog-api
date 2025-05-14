@@ -1,7 +1,8 @@
-package root
+package console
 
 import (
 	"fmt"
+	"github.com/alimarzban99/go-blog-api/internal/commands"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -9,7 +10,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "go-blog-api",
 	Short: "Go Blog API CLI",
-	Long:  `A command line interface for managing the Go Blog API.`,
+	Long:  `A command line interface for managing the go blog api.`,
 }
 
 func Execute() {
@@ -17,4 +18,8 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func init() {
+	rootCmd.AddCommand(commands.ServeCmd, commands.MigrateCmd)
 }

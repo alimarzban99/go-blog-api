@@ -1,4 +1,4 @@
-package root
+package commands
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	"github.com/alimarzban99/go-blog-api/internal/model"
 	"github.com/alimarzban99/go-blog-api/internal/routers"
 	"github.com/alimarzban99/go-blog-api/pkg/database"
+	"github.com/alimarzban99/go-blog-api/pkg/logging"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"log"
@@ -14,21 +15,22 @@ import (
 
 var port int
 
-var serveCmd = &cobra.Command{
+var ServeCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the HTTP server",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		config.LoadConfig()
+		logger := logging.NewLogger()
 		err := database.InitDb()
 		if err != nil {
-			log.Fatal("Database connection failed:", err)
+			logger.Fatal(logging.Startup, err.Error())
 		}
 		defer database.CloseDb()
 
 		err = database.InitRedis()
 		if err != nil {
-			log.Fatal("Redis connection failed:", err)
+			logger.Fatal(logging.Startup, err.Error())
 		}
 		defer database.CloseRedis()
 
@@ -55,14 +57,16 @@ var serveCmd = &cobra.Command{
 	},
 }
 
-var migrateCmd = &cobra.Command{
+var MigrateCmd = &cobra.Command{
 	Use:   "migrate",
 	Short: "Migrate Database",
 	Run: func(cmd *cobra.Command, args []string) {
 		config.LoadConfig()
+		logger := logging.NewLogger()
+
 		err := database.InitDb()
 		if err != nil {
-			log.Fatal("Database connection failed:", err)
+			logger.Fatal(logging.Migration, err.Error())
 		}
 		defer database.CloseDb()
 		model.Starter()
@@ -71,6 +75,5 @@ var migrateCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(serveCmd, migrateCmd)
-	serveCmd.Flags().IntVarP(&port, "port", "p", 0, "Port to run the server on")
+	ServeCmd.Flags().IntVarP(&port, "port", "p", 0, "Port to run the server on")
 }
