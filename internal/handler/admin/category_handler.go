@@ -30,6 +30,7 @@ func (h *CategoryHandler) Index(ctx *gin.Context) {
 
 	if err != nil {
 		response.ErrorResponse(ctx, err.Error())
+		return
 	}
 
 	response.SuccessResponse(ctx, categories)
@@ -41,13 +42,14 @@ func (h *CategoryHandler) Show(ctx *gin.Context) {
 	category, err := h.service.Show(categoryId)
 	if err != nil {
 		response.ErrorResponse(ctx, err.Error())
+		return
 	}
 
 	response.SuccessResponse(ctx, category)
 }
 
 func (h *CategoryHandler) Store(ctx *gin.Context) {
-	dto := new(dtoAdmin.StoreCategoryDTO)
+	dto := new(dtoAdmin.StoreAndUpdateCategoryDTO)
 	err := ctx.ShouldBindJSON(&dto)
 	if err != nil {
 		response.ValidationErrorResponse(ctx, err.Error())
@@ -58,13 +60,14 @@ func (h *CategoryHandler) Store(ctx *gin.Context) {
 
 	if err != nil {
 		response.ErrorResponse(ctx, err.Error())
+		return
 	}
 
 	response.CreatedResponse(ctx, result)
 }
 
 func (h *CategoryHandler) Update(ctx *gin.Context) {
-	dto := new(dtoAdmin.UpdateCategoryDTO)
+	dto := new(dtoAdmin.StoreAndUpdateCategoryDTO)
 	categoryId, _ := strconv.Atoi(ctx.Params.ByName("id"))
 	err := ctx.ShouldBindJSON(&dto)
 	if err != nil {
@@ -76,6 +79,7 @@ func (h *CategoryHandler) Update(ctx *gin.Context) {
 
 	if err != nil {
 		response.ErrorResponse(ctx, err.Error())
+		return
 	}
 
 	response.UpdateResponse(ctx, nil)
@@ -88,7 +92,8 @@ func (h *CategoryHandler) Destroy(ctx *gin.Context) {
 
 	if err != nil {
 		response.ErrorResponse(ctx, err.Error())
+		return
 	}
 
-	response.UpdateResponse(ctx, nil)
+	response.DeletedResponse(ctx)
 }

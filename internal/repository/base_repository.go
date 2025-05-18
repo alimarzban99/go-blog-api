@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"github.com/alimarzban99/go-blog-api/pkg/converter"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -28,13 +29,16 @@ type PaginatedResponse[T any] struct {
 func (r *Repository[Model, CrDTO, UpDTO, ResSingle]) FindOne(id int) (*ResSingle, error) {
 	var model Model
 
-	err := r.database.
+	query := r.database.
 		Where("id=?", id).
-		First(&model).
-		Error
+		First(&model)
 
-	if err != nil {
-		return nil, err
+	if query.Error != nil {
+		return nil, query.Error
+	}
+
+	if query.RowsAffected == 0 {
+		return nil, errors.New("record not found")
 	}
 
 	return converter.TypeConverter[ResSingle](model)
@@ -59,14 +63,17 @@ func (r *Repository[Model, CrDTO, UpDTO, ResSingle]) Update(id int, UpdateDTO *U
 	updateMap, _ := converter.TypeConverter[map[string]interface{}](UpdateDTO)
 	model := new(Model)
 
-	err := r.database.
+	query := r.database.
 		Model(model).
 		Where("id=?", id).
-		Updates(*updateMap).
-		Error
+		Updates(*updateMap)
 
-	if err != nil {
-		return err
+	if query.Error != nil {
+		return query.Error
+	}
+
+	if query.RowsAffected == 0 {
+		return errors.New("record not found")
 	}
 
 	return nil
@@ -74,8 +81,17 @@ func (r *Repository[Model, CrDTO, UpDTO, ResSingle]) Update(id int, UpdateDTO *U
 
 func (r *Repository[Model, CrDTO, UpDTO, ResSingle]) Destroy(id int) error {
 	model := new(Model)
-	err := r.database.Model(model).Where("id = ?", id).Delete(&model).Error
-	return err
+	query := r.database.Model(model).Where("id = ?", id).Delete(model)
+
+	if query.Error != nil {
+		return query.Error
+	}
+
+	if query.RowsAffected == 0 {
+		return errors.New("record not found")
+	}
+
+	return nil
 }
 
 func (r *Repository[Model, CrDTO, UpDTO, ResSingle]) OrderBY(query *gorm.DB, sort string, direction string) *gorm.DB {

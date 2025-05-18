@@ -8,12 +8,12 @@ import (
 )
 
 type CategoryRepository struct {
-	*Repository[model.Category, dtoAdmin.StoreCategoryDTO, dtoAdmin.UpdateCategoryDTO, admin.CategoryResource]
+	*Repository[model.Category, dtoAdmin.StoreAndUpdateCategoryDTO, dtoAdmin.StoreAndUpdateCategoryDTO, admin.CategoryResource]
 }
 
 func NewCategoryRepository() *CategoryRepository {
 	return &CategoryRepository{
-		&Repository[model.Category, dtoAdmin.StoreCategoryDTO, dtoAdmin.UpdateCategoryDTO, admin.CategoryResource]{
+		&Repository[model.Category, dtoAdmin.StoreAndUpdateCategoryDTO, dtoAdmin.StoreAndUpdateCategoryDTO, admin.CategoryResource]{
 			database: database.GetDB(),
 		},
 	}

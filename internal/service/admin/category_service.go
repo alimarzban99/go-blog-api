@@ -23,11 +23,11 @@ func (s *CategoryService) Show(id int) (*admin.CategoryResource, error) {
 	return s.repo.FindOne(id)
 }
 
-func (s *CategoryService) Store(dto *dtoAdmin.StoreCategoryDTO) (*admin.CategoryResource, error) {
+func (s *CategoryService) Store(dto *dtoAdmin.StoreAndUpdateCategoryDTO) (*admin.CategoryResource, error) {
 	return s.repo.Create(dto)
 }
 
-func (s *CategoryService) Update(id int, dto *dtoAdmin.UpdateCategoryDTO) error {
+func (s *CategoryService) Update(id int, dto *dtoAdmin.StoreAndUpdateCategoryDTO) error {
 	return s.repo.Update(id, dto)
 }
 
