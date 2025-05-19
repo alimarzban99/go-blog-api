@@ -20,8 +20,8 @@
 # Go workspace file
 go.work
 
-/keys/
+/src/keys/
 /.idea
-/.env
-/logs
-/uploads
+/src/.env
+/src/logs
+/src/uploads
