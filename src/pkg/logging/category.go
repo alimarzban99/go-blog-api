@@ -8,6 +8,7 @@ var subCategoryToCategory = map[SubCategory]Category{
 	Startup:              General,
 	ExternalService:      General,
 	Config:               General,
+	Prometheus:           General,
 	Migration:            DataBase,
 	Select:               DataBase,
 	Rollback:             DataBase,
@@ -36,6 +37,7 @@ const (
 	Startup         SubCategory = "Startup"
 	ExternalService SubCategory = "ExternalService"
 	Config          SubCategory = "Config"
+	Prometheus      SubCategory = "Prometheus"
 
 	Migration SubCategory = "Migration"
 	Select    SubCategory = "Select"

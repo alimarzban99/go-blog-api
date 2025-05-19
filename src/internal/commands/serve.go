@@ -4,16 +4,21 @@ import (
 	"fmt"
 	"github.com/alimarzban99/go-blog-api/config"
 	"github.com/alimarzban99/go-blog-api/internal/middlewares"
-	"github.com/alimarzban99/go-blog-api/internal/model"
 	"github.com/alimarzban99/go-blog-api/internal/routers"
 	"github.com/alimarzban99/go-blog-api/pkg/database"
 	"github.com/alimarzban99/go-blog-api/pkg/logging"
+	"github.com/alimarzban99/go-blog-api/pkg/metrics"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	"log"
 )
 
-var port int
+var (
+	port   int
+	logger logging.Logger
+)
 
 var ServeCmd = &cobra.Command{
 	Use:   "serve",
@@ -21,7 +26,7 @@ var ServeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		config.LoadConfig()
-		logger := logging.NewLogger()
+		logger = logging.NewLogger()
 		err := database.InitDb()
 		if err != nil {
 			logger.Fatal(logging.Startup, err.Error())
@@ -34,16 +39,19 @@ var ServeCmd = &cobra.Command{
 		}
 		defer database.CloseRedis()
 
-		model.Starter()
-
 		appConfig := config.Config.App
 		gin.SetMode(appConfig.Env)
 		router := gin.New()
+
+		RegisterPrometheus()
+
 		router.Use(gin.Logger())
 		router.Use(middlewares.CustomRecovery())
+		router.Use(middlewares.Prometheus())
 		router.Use(middlewares.Throttle())
 
 		router.Static("preview", "./uploads")
+		router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 		apiV1 := router.Group("api/v1/")
 		routers.AuthRouter(apiV1)
@@ -63,23 +71,18 @@ var ServeCmd = &cobra.Command{
 	},
 }
 
-var MigrateCmd = &cobra.Command{
-	Use:   "migrate",
-	Short: "Migrate Database",
-	Run: func(cmd *cobra.Command, args []string) {
-		config.LoadConfig()
-		logger := logging.NewLogger()
-
-		err := database.InitDb()
-		if err != nil {
-			logger.Fatal(logging.Migration, err.Error())
-		}
-		defer database.CloseDb()
-		model.Starter()
-		log.Println("migrate database successfully")
-	},
-}
-
 func init() {
 	ServeCmd.Flags().IntVarP(&port, "port", "p", 0, "Port to run the server on")
+}
+
+func RegisterPrometheus() {
+	err := prometheus.Register(metrics.DbCall)
+	if err != nil {
+		logger.Error(logging.Prometheus, err.Error())
+	}
+
+	err = prometheus.Register(metrics.HttpDuration)
+	if err != nil {
+		logger.Error(logging.Prometheus, err.Error())
+	}
 }

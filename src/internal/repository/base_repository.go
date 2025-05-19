@@ -3,9 +3,11 @@ package repository
 import (
 	"errors"
 	"github.com/alimarzban99/go-blog-api/pkg/converter"
+	"github.com/alimarzban99/go-blog-api/pkg/metrics"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"math"
+	"reflect"
 )
 
 type Repository[Model any, CrDTO any, UpDTO any, ResSingle any] struct {
@@ -34,13 +36,16 @@ func (r *Repository[Model, CrDTO, UpDTO, ResSingle]) FindOne(id int) (*ResSingle
 		First(&model)
 
 	if query.Error != nil {
+		metrics.DbCall.WithLabelValues(reflect.TypeOf(model).String(), "FindOne", "Failed").Inc()
 		return nil, query.Error
 	}
 
 	if query.RowsAffected == 0 {
+		metrics.DbCall.WithLabelValues(reflect.TypeOf(model).String(), "FindOne", "Failed").Inc()
 		return nil, errors.New("record not found")
 	}
 
+	metrics.DbCall.WithLabelValues(reflect.TypeOf(model).String(), "FindOne", "Success").Inc()
 	return converter.TypeConverter[ResSingle](model)
 }
 
