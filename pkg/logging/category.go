@@ -4,6 +4,7 @@ type Category string
 type SubCategory string
 
 var subCategoryToCategory = map[SubCategory]Category{
+	Recovery:             General,
 	Startup:              General,
 	ExternalService:      General,
 	Config:               General,
@@ -31,6 +32,7 @@ const (
 )
 
 const (
+	Recovery        SubCategory = "General"
 	Startup         SubCategory = "Startup"
 	ExternalService SubCategory = "ExternalService"
 	Config          SubCategory = "Config"

@@ -3,6 +3,7 @@ package admin
 import (
 	dtoAdmin "github.com/alimarzban99/go-blog-api/internal/dtos/admin"
 	"github.com/alimarzban99/go-blog-api/internal/service/admin"
+	"github.com/alimarzban99/go-blog-api/pkg/filer"
 	"github.com/alimarzban99/go-blog-api/pkg/response"
 	"github.com/gin-gonic/gin"
 	"strconv"
@@ -10,14 +11,14 @@ import (
 
 type PostHandler struct {
 	service *admin.PostService
+	filer   *filer.Filer
 }
 
 func NewPostHandler() *PostHandler {
-	return &PostHandler{service: admin.NewPostService()}
+	return &PostHandler{service: admin.NewPostService(), filer: filer.NewFiler()}
 }
 
 func (h *PostHandler) Index(ctx *gin.Context) {
-
 	dto := new(dtoAdmin.BaseAdminListDTO)
 	err := ctx.ShouldBindJSON(&dto)
 	if err != nil {
@@ -30,6 +31,7 @@ func (h *PostHandler) Index(ctx *gin.Context) {
 
 	if err != nil {
 		response.ErrorResponse(ctx, err.Error())
+		return
 	}
 
 	response.SuccessResponse(ctx, posts)
@@ -47,7 +49,7 @@ func (h *PostHandler) Show(ctx *gin.Context) {
 }
 
 func (h *PostHandler) Store(ctx *gin.Context) {
-	dto := new(dtoAdmin.StorePostDTO)
+	dto := new(dtoAdmin.StoreAndUpdatePostDTO)
 	err := ctx.ShouldBindJSON(&dto)
 	if err != nil {
 		response.ValidationErrorResponse(ctx, err.Error())
@@ -64,7 +66,7 @@ func (h *PostHandler) Store(ctx *gin.Context) {
 }
 
 func (h *PostHandler) Update(ctx *gin.Context) {
-	dto := new(dtoAdmin.UpdatePostDTO)
+	dto := new(dtoAdmin.StoreAndUpdatePostDTO)
 	PostId, _ := strconv.Atoi(ctx.Params.ByName("id"))
 	err := ctx.ShouldBindJSON(&dto)
 	if err != nil {
@@ -91,4 +93,21 @@ func (h *PostHandler) Destroy(ctx *gin.Context) {
 	}
 
 	response.UpdateResponse(ctx, nil)
+}
+
+func (h *PostHandler) Upload(ctx *gin.Context) {
+	fileHeader, err := ctx.FormFile("file")
+	if err != nil {
+		response.ErrorResponse(ctx, "No file received")
+		return
+	}
+
+	file, err := h.filer.Uploader(fileHeader)
+
+	if err != nil {
+		response.ErrorResponse(ctx, err.Error())
+		return
+	}
+
+	response.CreatedResponse(ctx, file)
 }

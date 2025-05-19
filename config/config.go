@@ -13,6 +13,7 @@ type AppConfig struct {
 		Name string
 		Port int
 		Env  string
+		URL  string
 	}
 	Redis struct {
 		Host     string
@@ -68,10 +69,12 @@ func LoadConfig() {
 			Name string
 			Port int
 			Env  string
+			URL  string
 		}{
 			Name: viper.GetString("APP_NAME"),
 			Port: viper.GetInt("APP_PORT"),
 			Env:  viper.GetString("APP_ENV"),
+			URL:  viper.GetString("APP_URL"),
 		},
 		Redis: struct {
 			Host     string

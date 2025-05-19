@@ -2,6 +2,7 @@ package repository
 
 import (
 	dtoAdmin "github.com/alimarzban99/go-blog-api/internal/dtos/admin"
+	dtoClient "github.com/alimarzban99/go-blog-api/internal/dtos/client"
 	"github.com/alimarzban99/go-blog-api/internal/model"
 	"github.com/alimarzban99/go-blog-api/internal/resources/admin"
 	"github.com/alimarzban99/go-blog-api/pkg/database"
@@ -9,13 +10,13 @@ import (
 )
 
 type PostRepository struct {
-	*Repository[model.Post, dtoAdmin.StorePostDTO, dtoAdmin.UpdatePostDTO, admin.PostResource]
+	*Repository[model.Post, dtoAdmin.StoreAndUpdatePostDTO, dtoAdmin.StoreAndUpdatePostDTO, admin.PostResource]
 	redis *redis.Client
 }
 
 func NewPostRepository() *PostRepository {
 	return &PostRepository{
-		Repository: &Repository[model.Post, dtoAdmin.StorePostDTO, dtoAdmin.UpdatePostDTO, admin.PostResource]{
+		Repository: &Repository[model.Post, dtoAdmin.StoreAndUpdatePostDTO, dtoAdmin.StoreAndUpdatePostDTO, admin.PostResource]{
 			database: database.GetDB(),
 		},
 		redis: database.GetRedis(),
@@ -25,7 +26,7 @@ func NewPostRepository() *PostRepository {
 func (r *PostRepository) AdminPostsList(dto *dtoAdmin.BaseAdminListDTO) (*PaginatedResponse[model.Post], error) {
 
 	query := r.database.Model(&model.Post{}).
-		Select("id, title, slug, description, email, hits, category_id, user_id, created_at")
+		Select("id, category_id, user_id, title, slug, description, hits, status, created_at")
 
 	if dto.Search != nil {
 		query = query.Where("title LIKE ?", "%"+*dto.Search+"%")
@@ -51,10 +52,18 @@ func (r *PostRepository) AdminPostsList(dto *dtoAdmin.BaseAdminListDTO) (*Pagina
 
 	return r.Paginate(query, *dto.Page, *dto.Limit)
 }
-func (r *PostRepository) ClientPostsList(dto *dtoAdmin.BaseAdminListDTO) (*PaginatedResponse[model.Post], error) {
+func (r *PostRepository) ClientPostsList(dto *dtoClient.BaseAdminListDTO) (*PaginatedResponse[model.Post], error) {
 
 	query := r.database.Model(&model.Post{}).
-		Select("id, title, slug, description, email, hits, category_id, user_id, created_at")
+		Select("id, title, slug, description, hits, category_id, user_id, created_at")
+
+	if dto.Search != nil {
+		query = query.Where("title LIKE ?", "%"+*dto.Search+"%")
+	}
+
+	if dto.Search != nil {
+		query = query.Where("description LIKE ?", "%"+*dto.Search+"%")
+	}
 
 	query = r.OrderBY(query, *dto.Sort, *dto.Direction)
 

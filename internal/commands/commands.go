@@ -36,16 +36,22 @@ var ServeCmd = &cobra.Command{
 
 		model.Starter()
 
-		gin.SetMode(config.Config.App.Env)
-		router := gin.Default()
+		appConfig := config.Config.App
+		gin.SetMode(appConfig.Env)
+		router := gin.New()
+		router.Use(gin.Logger())
+		router.Use(middlewares.CustomRecovery())
+		router.Use(middlewares.Throttle())
 
-		apiV1 := router.Group("api/v1/", middlewares.Throttle())
+		router.Static("preview", "./uploads")
+
+		apiV1 := router.Group("api/v1/")
 		routers.AuthRouter(apiV1)
 		routers.UserRouter(apiV1)
 		routers.CategoryRouter(apiV1)
 		routers.PostRouter(apiV1)
 
-		runPort := fmt.Sprintf(":%d", config.Config.App.Port)
+		runPort := fmt.Sprintf(":%d", appConfig.Port)
 		if port != 0 {
 			runPort = fmt.Sprintf(":%d", port)
 		}

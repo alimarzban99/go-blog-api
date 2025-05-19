@@ -15,6 +15,7 @@ func PostRouter(r *gin.RouterGroup) {
 		postRouter.GET("", postHandler.Index)
 		postRouter.GET(":id", postHandler.Show)
 		postRouter.POST("", postHandler.Store)
+		postRouter.POST("upload", postHandler.Upload)
 		postRouter.PUT(":id", postHandler.Update)
 		postRouter.DELETE(":id", postHandler.Destroy)
 	}

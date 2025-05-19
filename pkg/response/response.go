@@ -41,6 +41,14 @@ func ErrorResponse(c *gin.Context, error string) {
 	})
 }
 
+func PanicResponse(ctx *gin.Context, error string) {
+	ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+		"success": false,
+		"error":   error,
+		"data":    nil,
+	})
+}
+
 func ValidationErrorResponse(c *gin.Context, error string) {
 	c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 		"success": false,

@@ -23,11 +23,11 @@ func (s *PostService) Show(id int) (*admin.PostResource, error) {
 	return s.repo.FindOne(id)
 }
 
-func (s *PostService) Store(dto *dtoAdmin.StorePostDTO) (*admin.PostResource, error) {
+func (s *PostService) Store(dto *dtoAdmin.StoreAndUpdatePostDTO) (*admin.PostResource, error) {
 	return s.repo.Create(dto)
 }
 
-func (s *PostService) Update(id int, dto *dtoAdmin.UpdatePostDTO) error {
+func (s *PostService) Update(id int, dto *dtoAdmin.StoreAndUpdatePostDTO) error {
 	return s.repo.Update(id, dto)
 }
 
